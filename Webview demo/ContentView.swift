@@ -22,7 +22,7 @@ struct ContentView: View {
     @State private var isScrollingDown = false
 
     @State private var barState: BottomBarState = .collapse
-    @State private var barHeight: CGFloat = 44 + 8
+    @State private var barHeight: CGFloat = BottomBarState.collapse.height
 
     var body: some View {
         ZStack {
@@ -74,16 +74,11 @@ struct ContentView: View {
         VStack {
             if barState == .minimal {
                 BottomBarMinimalView()
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
             } else {
-                HStack {
-                    Spacer()
-                    Text("Hello, world!")
-                    Spacer()
-                }
-                .frame(height: 44)
+                BottomBarToolView(state: barState)
             }
         }
-        .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
         .background(.regularMaterial) // 添加模糊玻璃效果背景
     }
 }
@@ -98,9 +93,68 @@ enum BottomBarState {
         case .expand:
             return 60 + 8
         case .collapse:
-            return 44 + 8
+            return 44 + 24
         case .minimal:
             return 18 + 8
+        }
+    }
+}
+
+struct BottomBarToolView: View {
+    let state: BottomBarState
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            if state == .collapse {
+                HStack(spacing: 0) {
+                    Button {
+                        
+                    } label: {
+                        Image(.close)
+                    }
+                    Spacer()
+                    Capsule()
+                        .stroke(.gray1, lineWidth: 1)
+                        .frame(width: 104)
+                        .overlay {
+                            HStack(spacing: 8) {
+                                Button {
+                                    
+                                } label: {
+                                    Image(.icBack)
+                                }
+                                Button {
+                                    
+                                } label: {
+                                    Image(.icForward)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 4)
+                        }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(.icTrans)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                       Circle()
+                            .stroke(.gray1, lineWidth: 1)
+                            .frame(width: 28)
+                            .overlay {
+                                Image(.icUp)
+                            }
+                    }
+                }
+                .frame(height: 44)
+                .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
+            } else {
+                
+            }
         }
     }
 }
@@ -109,7 +163,7 @@ struct BottomBarMinimalView: View {
     var body: some View {
         HStack {
             Spacer()
-            Text("developer.apple.com")
+            Text("m.youtube.com")
                 .font(.system(size: 14))
                 .foregroundStyle(.gray3)
             Spacer()
@@ -123,7 +177,9 @@ struct BottomBarMinimalView: View {
 }
 
 #Preview("BottomBar") {
-    VStack {
+    VStack(spacing: 20) {
+        BottomBarToolView(state: .collapse)
+        
         BottomBarMinimalView()
     }
 }
