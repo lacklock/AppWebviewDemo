@@ -16,6 +16,8 @@ struct WebViewWithControls: UIViewRepresentable {
     @Binding var canGoForward: Bool
     @Binding var webView: WKWebView
     
+    @Binding var contentInsetHeight: CGFloat
+    
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
@@ -26,14 +28,19 @@ struct WebViewWithControls: UIViewRepresentable {
         webView.configuration.allowsInlineMediaPlayback = true
         
         // 配置滚动视图，让内容可以延伸到底部栏下方
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
-        webView.scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 44, right: 0)
+//        webView.scrollView.contentInsetAdjustmentBehavior = .never
+//        webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: contentInsetHeight, right: 0)
+//        webView.scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: contentInsetHeight, right: 0)
+        webView.scrollView.clipsToBounds = false
+        webView.clipsToBounds = false
         
         return webView
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
+//        if webView.scrollView.contentInset.bottom != self.contentInsetHeight {
+//            webView.scrollView.contentInset.bottom = self.contentInsetHeight
+//        }
         // 将webView实例传递给父视图
         DispatchQueue.main.async {
             self.webView = webView

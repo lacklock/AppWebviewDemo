@@ -9,14 +9,16 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
-    @State private var currentURL = URL(string: "https://developer.apple.com")!
+    @State private var currentURL = URL(string: "https://www.apple.com/ipad-air/")!
+//    @State private var currentURL = URL(string: "https://www.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
     @State private var webView: WKWebView = WKWebView()
     @State private var isLoading = false
     @State private var canGoForward = false
     @State private var canGoBack = false
 
     @State private var barState: BottomBarState = .collapse
-    
+    @State private var barHeight: CGFloat = 44 + 8
+
     var body: some View {
         ZStack {
             WebViewWithControls(
@@ -24,9 +26,14 @@ struct ContentView: View {
                 isLoading: $isLoading,
                 canGoBack: $canGoBack,
                 canGoForward: $canGoForward,
-                webView: $webView
+                webView: $webView,
+                contentInsetHeight: $barHeight
             )
+            .padding(.bottom, barHeight)
             VStack {
+                Rectangle().fill(.white)
+                    .frame(height: 62)
+                    .ignoresSafeArea(edges: .top)
                 Spacer()
                 bottomBar
             }
@@ -46,10 +53,9 @@ struct ContentView: View {
                 }
                 .frame(height: 44)
             }
-        
         }
         .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
-        .background(.ultraThinMaterial) // 添加模糊玻璃效果背景
+        .background(.regularMaterial) // 添加模糊玻璃效果背景
     }
 }
 
@@ -57,6 +63,17 @@ enum BottomBarState {
     case expand
     case collapse
     case minimal
+    
+    var height: CGFloat {
+        switch self {
+        case .expand:
+            return 60
+        case .collapse:
+            return 44
+        case .minimal:
+            return 22
+        }
+    }
 }
 
 struct BottomBarMinimalView: View {
