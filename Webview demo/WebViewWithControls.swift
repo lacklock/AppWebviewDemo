@@ -41,19 +41,27 @@ struct WebViewWithControls: UIViewRepresentable {
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
-//        if webView.scrollView.contentInset.bottom != self.contentInsetHeight {
-//            webView.scrollView.contentInset.bottom = self.contentInsetHeight
-//        }
         // 将webView实例传递给父视图
         DispatchQueue.main.async {
             self.webView = webView
         }
         
-        // 只在URL改变时加载新页面
-        if webView.url != url {
+        if webView.url == nil {
             let request = URLRequest(url: url)
             webView.load(request)
+        } else {
+            // 使用更准确的URL比较方法
+            if let webviewURL = webView.url,
+               !areURLsEqual(webviewURL, url) {
+                let request = URLRequest(url: url)
+                webView.load(request)
+            }
         }
+    }
+    
+    // 添加URL比较辅助方法
+    private func areURLsEqual(_ url1: URL, _ url2: URL) -> Bool {
+        return url1.absoluteString == url2.absoluteString
     }
     
     func makeCoordinator() -> Coordinator {
@@ -97,21 +105,23 @@ struct WebViewWithControls: UIViewRepresentable {
         }
         
         // MARK: - UIScrollViewDelegate
+        func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+            lastContentOffset = scrollView.contentOffset.y
+        }
+        
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             let currentOffset = scrollView.contentOffset.y
             let offsetDifference = currentOffset - lastContentOffset
-            
-            // 设置一个最小滑动距离阈值，避免微小滑动触发状态变化
+            print("offsetDifference: \(offsetDifference)")
+
             let threshold: CGFloat = 5.0
             
             if abs(offsetDifference) > threshold {
                 DispatchQueue.main.async {
                     if offsetDifference > 0 {
-                        // 向上滑动（内容向上移动）
                         self.parent.isScrollingUp = true
                         self.parent.isScrollingDown = false
                     } else {
-                        // 向下滑动（内容向下移动）
                         self.parent.isScrollingUp = false
                         self.parent.isScrollingDown = true
                     }
@@ -121,7 +131,6 @@ struct WebViewWithControls: UIViewRepresentable {
         }
         
         func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-            // 滑动结束时重置状态
             DispatchQueue.main.async {
                 self.parent.isScrollingUp = false
                 self.parent.isScrollingDown = false

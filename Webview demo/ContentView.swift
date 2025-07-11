@@ -9,7 +9,8 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
-    @State private var currentURL = URL(string: "https://www.apple.com/ipad-air/")!
+    @State private var currentURL = URL(string: "https://developer.apple.com/")!
+//    @State private var currentURL = URL(string: "https://www.apple.com/ipad-air/")!
 //    @State private var currentURL = URL(string: "https://www.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
     @State private var webView: WKWebView = WKWebView()
     @State private var isLoading = false
@@ -34,6 +35,7 @@ struct ContentView: View {
                 isScrollingUp: $isScrollingUp,
                 isScrollingDown: $isScrollingDown
             )
+            .id("aaa")
             .padding(.bottom, barHeight)
             VStack {
                 Rectangle().fill(.white)
@@ -46,13 +48,23 @@ struct ContentView: View {
         .onChange(of: isScrollingUp) { _, newValue in
             if newValue {
                 print("页面正在向上滑动")
-                // 可以在这里添加向上滑动时的逻辑，比如隐藏底部栏
+                if barState != .minimal {
+                    withAnimation(.easeOut(duration: 0.15),  {
+                        barState = .minimal
+//                        barHeight = barState.height
+                    })
+                }
             }
         }
         .onChange(of: isScrollingDown) { _, newValue in
             if newValue {
                 print("页面正在向下滑动")
-                // 可以在这里添加向下滑动时的逻辑，比如显示底部栏
+                if barState != .collapse {
+                    withAnimation(.easeOut(duration: 0.15),  {
+                        barState = .collapse
+//                        barHeight = barState.height
+                    })
+                }
             }
         }
     }
@@ -84,11 +96,11 @@ enum BottomBarState {
     var height: CGFloat {
         switch self {
         case .expand:
-            return 60
+            return 60 + 8
         case .collapse:
-            return 44
+            return 44 + 8
         case .minimal:
-            return 22
+            return 22 + 8
         }
     }
 }
@@ -96,9 +108,11 @@ enum BottomBarState {
 struct BottomBarMinimalView: View {
     var body: some View {
         HStack {
+            Spacer()
             Text("developer.apple.com")
                 .font(.system(size: 14))
                 .foregroundStyle(.gray3)
+            Spacer()
         }
     }
 }
