@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var isLoading = false
     @State private var canGoForward = false
     @State private var canGoBack = false
+
+    @State private var barState: BottomBarState = .collapse
     
     var body: some View {
         ZStack {
@@ -34,17 +36,45 @@ struct ContentView: View {
     @ViewBuilder
     private var bottomBar: some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("Hello, world!")
-                Spacer()
+            if barState == .minimal {
+                BottomBarMinimalView()
+            } else {
+                HStack {
+                    Spacer()
+                    Text("Hello, world!")
+                    Spacer()
+                }
+                .frame(height: 44)
             }
+        
         }
-        .frame(height: 44)
+        .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
         .background(.ultraThinMaterial) // 添加模糊玻璃效果背景
+    }
+}
+
+enum BottomBarState {
+    case expand
+    case collapse
+    case minimal
+}
+
+struct BottomBarMinimalView: View {
+    var body: some View {
+        HStack {
+            Text("developer.apple.com")
+                .font(.system(size: 14))
+                .foregroundStyle(.gray3)
+        }
     }
 }
 
 #Preview {
     ContentView()
+}
+
+#Preview("BottomBar") {
+    VStack {
+        BottomBarMinimalView()
+    }
 }
