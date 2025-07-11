@@ -75,8 +75,10 @@ struct ContentView: View {
             if barState == .minimal {
                 BottomBarMinimalView()
                     .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
+                    .transition(.blurReplace)
             } else {
                 BottomBarToolView(state: barState)
+                    .transition(.blurReplace)
             }
         }
         .background(.regularMaterial) // 添加模糊玻璃效果背景
@@ -117,20 +119,7 @@ struct BottomBarToolView: View {
                         .stroke(.gray1, lineWidth: 1)
                         .frame(width: 104)
                         .overlay {
-                            HStack(spacing: 8) {
-                                Button {
-                                    
-                                } label: {
-                                    Image(.icBack)
-                                }
-                                Button {
-                                    
-                                } label: {
-                                    Image(.icForward)
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 4)
+                            historyButtons
                         }
                     Spacer()
                     Button {
@@ -156,6 +145,24 @@ struct BottomBarToolView: View {
                 
             }
         }
+    }
+    
+    @ViewBuilder
+    private var historyButtons: some View {
+        HStack(spacing: 8) {
+            Button {
+                
+            } label: {
+                Image(.icBack)
+            }
+            Button {
+                
+            } label: {
+                Image(.icForward)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
     }
 }
 
