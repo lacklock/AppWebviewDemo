@@ -16,8 +16,6 @@ struct WebViewWithControls: UIViewRepresentable {
     @Binding var canGoForward: Bool
     @Binding var webView: WKWebView
     
-    @Binding var contentInsetHeight: CGFloat
-    
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator

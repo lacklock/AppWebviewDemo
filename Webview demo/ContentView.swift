@@ -26,8 +26,7 @@ struct ContentView: View {
                 isLoading: $isLoading,
                 canGoBack: $canGoBack,
                 canGoForward: $canGoForward,
-                webView: $webView,
-                contentInsetHeight: $barHeight
+                webView: $webView
             )
             .padding(.bottom, barHeight)
             VStack {
