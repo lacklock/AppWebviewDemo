@@ -9,9 +9,9 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
-    @State private var currentURL = URL(string: "https://developer.apple.com/")!
+//    @State private var currentURL = URL(string: "https://developer.apple.com/")!
 //    @State private var currentURL = URL(string: "https://www.apple.com/ipad-air/")!
-//    @State private var currentURL = URL(string: "https://www.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
+    @State private var currentURL = URL(string: "https://m.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
     @State private var webView: WKWebView = WKWebView()
     @State private var isLoading = false
     @State private var canGoForward = false
@@ -37,7 +37,7 @@ struct ContentView: View {
             )
             .id("aaa")
             .padding(.bottom, barHeight)
-            VStack {
+            VStack(spacing: 0) {
                 Rectangle().fill(.white)
                     .frame(height: 62)
                     .ignoresSafeArea(edges: .top)
@@ -51,7 +51,7 @@ struct ContentView: View {
                 if barState != .minimal {
                     withAnimation(.easeOut(duration: 0.15),  {
                         barState = .minimal
-//                        barHeight = barState.height
+                        barHeight = barState.height
                     })
                 }
             }
@@ -62,7 +62,7 @@ struct ContentView: View {
                 if barState != .collapse {
                     withAnimation(.easeOut(duration: 0.15),  {
                         barState = .collapse
-//                        barHeight = barState.height
+                        barHeight = barState.height
                     })
                 }
             }
@@ -100,7 +100,7 @@ enum BottomBarState {
         case .collapse:
             return 44 + 8
         case .minimal:
-            return 22 + 8
+            return 18 + 8
         }
     }
 }
@@ -114,6 +114,7 @@ struct BottomBarMinimalView: View {
                 .foregroundStyle(.gray3)
             Spacer()
         }
+        .frame(height: 18)
     }
 }
 
