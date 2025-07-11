@@ -15,6 +15,10 @@ struct ContentView: View {
     @State private var isLoading = false
     @State private var canGoForward = false
     @State private var canGoBack = false
+    
+    // 新增的滑动方向状态变量
+    @State private var isScrollingUp = false
+    @State private var isScrollingDown = false
 
     @State private var barState: BottomBarState = .collapse
     @State private var barHeight: CGFloat = 44 + 8
@@ -26,7 +30,9 @@ struct ContentView: View {
                 isLoading: $isLoading,
                 canGoBack: $canGoBack,
                 canGoForward: $canGoForward,
-                webView: $webView
+                webView: $webView,
+                isScrollingUp: $isScrollingUp,
+                isScrollingDown: $isScrollingDown
             )
             .padding(.bottom, barHeight)
             VStack {
@@ -35,6 +41,18 @@ struct ContentView: View {
                     .ignoresSafeArea(edges: .top)
                 Spacer()
                 bottomBar
+            }
+        }
+        .onChange(of: isScrollingUp) { _, newValue in
+            if newValue {
+                print("页面正在向上滑动")
+                // 可以在这里添加向上滑动时的逻辑，比如隐藏底部栏
+            }
+        }
+        .onChange(of: isScrollingDown) { _, newValue in
+            if newValue {
+                print("页面正在向下滑动")
+                // 可以在这里添加向下滑动时的逻辑，比如显示底部栏
             }
         }
     }

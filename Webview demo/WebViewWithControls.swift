@@ -15,6 +15,8 @@ struct WebViewWithControls: UIViewRepresentable {
     @Binding var canGoBack: Bool
     @Binding var canGoForward: Bool
     @Binding var webView: WKWebView
+    @Binding var isScrollingUp: Bool
+    @Binding var isScrollingDown: Bool
     
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
@@ -31,6 +33,9 @@ struct WebViewWithControls: UIViewRepresentable {
 //        webView.scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: contentInsetHeight, right: 0)
         webView.scrollView.clipsToBounds = false
         webView.clipsToBounds = false
+        
+        // 设置滚动代理来检测滑动方向
+        webView.scrollView.delegate = context.coordinator
         
         return webView
     }
@@ -55,8 +60,9 @@ struct WebViewWithControls: UIViewRepresentable {
         Coordinator(self)
     }
     
-    class Coordinator: NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, UIScrollViewDelegate {
         let parent: WebViewWithControls
+        private var lastContentOffset: CGFloat = 0
         
         init(_ parent: WebViewWithControls) {
             self.parent = parent
@@ -87,6 +93,48 @@ struct WebViewWithControls: UIViewRepresentable {
             DispatchQueue.main.async {
                 self.parent.isLoading = false
                 print("页面加载失败: \(error.localizedDescription)")
+            }
+        }
+        
+        // MARK: - UIScrollViewDelegate
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            let currentOffset = scrollView.contentOffset.y
+            let offsetDifference = currentOffset - lastContentOffset
+            
+            // 设置一个最小滑动距离阈值，避免微小滑动触发状态变化
+            let threshold: CGFloat = 5.0
+            
+            if abs(offsetDifference) > threshold {
+                DispatchQueue.main.async {
+                    if offsetDifference > 0 {
+                        // 向上滑动（内容向上移动）
+                        self.parent.isScrollingUp = true
+                        self.parent.isScrollingDown = false
+                    } else {
+                        // 向下滑动（内容向下移动）
+                        self.parent.isScrollingUp = false
+                        self.parent.isScrollingDown = true
+                    }
+                }
+                lastContentOffset = currentOffset
+            }
+        }
+        
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            // 滑动结束时重置状态
+            DispatchQueue.main.async {
+                self.parent.isScrollingUp = false
+                self.parent.isScrollingDown = false
+            }
+        }
+        
+        func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+            // 如果没有减速，立即重置状态
+            if !decelerate {
+                DispatchQueue.main.async {
+                    self.parent.isScrollingUp = false
+                    self.parent.isScrollingDown = false
+                }
             }
         }
     }
