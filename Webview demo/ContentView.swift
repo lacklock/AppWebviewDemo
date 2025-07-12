@@ -21,8 +21,8 @@ struct ContentView: View {
     @State private var isScrollingUp = false
     @State private var isScrollingDown = false
 
-    @State private var barState: BottomBarState = .collapse
-    @State private var barHeight: CGFloat = BottomBarState.collapse.height
+    @State private var barState: BottomBarState = .toolBar
+    @State private var barHeight: CGFloat = BottomBarState.toolBar.height
 
     var body: some View {
         ZStack {
@@ -59,9 +59,9 @@ struct ContentView: View {
         .onChange(of: isScrollingDown) { _, newValue in
             if newValue {
                 print("页面正在向下滑动")
-                if barState != .collapse {
+                if barState != .toolBar {
                     withAnimation(.easeOut(duration: 0.15),  {
-                        barState = .collapse
+                        barState = .toolBar
                         barHeight = barState.height
                     })
                 }
@@ -91,15 +91,12 @@ struct ContentView: View {
 }
 
 enum BottomBarState {
-    case expand
-    case collapse
+    case toolBar
     case minimal
     
     var height: CGFloat {
         switch self {
-        case .expand:
-            return 68 + 40
-        case .collapse:
+        case .toolBar:
             return 44 + 24
         case .minimal:
             return 18 + 6
@@ -109,12 +106,22 @@ enum BottomBarState {
 
 struct BottomBarToolView: View {
     @Binding var state: BottomBarState
+    @State var isExpand: Bool = false
     @Namespace var namespace
     
     var body: some View {
         VStack(spacing: 0) {
-            if state == .collapse {
-                HStack(spacing: 0) {
+            HStack(spacing: 0) {
+                if isExpand {
+                    ZStack {
+                        Capsule()
+                            .fill(.gray3.opacity(0.1))
+                        Capsule()
+                            .stroke(.gray1, lineWidth: 1)
+                    }
+                    .matchedGeometryEffect(id: "capsule", in: namespace)
+                    .padding(.trailing, 24)
+                } else {
                     Button {
                         
                     } label: {
@@ -129,26 +136,17 @@ struct BottomBarToolView: View {
                             historyButtons
                         }
                     Spacer()
-                    transButton
+                }
+                transButton
+                    .padding(.trailing, isExpand ? 24 : 0)
+                if !isExpand {
                     Spacer()
-                    stateButton
                 }
-                .frame(height: 44)
-                .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
-            } else {
-                HStack(spacing: 0) {
-                    ZStack {
-                        Capsule()
-                            .fill(.gray3.opacity(0.1))
-                        Capsule()
-                            .stroke(.gray1, lineWidth: 1)
-                    }
-                    .matchedGeometryEffect(id: "capsule", in: namespace)
-                    transButton
-                    stateButton
-                }
-                .frame(height: 44)
-                .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
+                stateButton
+            }
+            .frame(height: 44)
+            .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
+            if isExpand {
                 HStack(spacing: 0) {
                     Button {
                         
@@ -178,11 +176,7 @@ struct BottomBarToolView: View {
     private var stateButton: some View {
         Button {
             withAnimation {
-                if state == .expand {
-                    state = .collapse
-                } else {
-                    state = .expand
-                }
+                isExpand.toggle()
             }
         } label: {
            Circle()
@@ -190,9 +184,9 @@ struct BottomBarToolView: View {
                 .frame(width: 28)
                 .overlay {
                     Image(.icUp)
-                        .rotationEffect(.degrees(state == .expand ? 180 : 0))                }
+                        .rotationEffect(.degrees(isExpand ? 180 : 0))
+                }
         }
-        .matchedGeometryEffect(id: "stateButton", in: namespace)
     }
     
     @ViewBuilder
@@ -203,8 +197,6 @@ struct BottomBarToolView: View {
             Image(.icTrans)
                 .shadow(color: .gray3.opacity(0.15), radius: 6, y: 3)
         }
-        .padding(.horizontal, 24)
-        .matchedGeometryEffect(id: "tranButton", in: namespace)
     }
     
     @ViewBuilder
@@ -244,12 +236,12 @@ struct BottomBarMinimalView: View {
 }
 
 #Preview("BottomBar") {
-    @Previewable @State var state: BottomBarState = .collapse
+    @Previewable @State var state: BottomBarState = .toolBar
     
     VStack(spacing: 20) {
         BottomBarToolView(state: $state)
         
-        BottomBarToolView(state: .constant(.expand))
+        BottomBarToolView(state: $state, isExpand: true)
 
         BottomBarMinimalView()
     }
