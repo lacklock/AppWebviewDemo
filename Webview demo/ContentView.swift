@@ -74,7 +74,7 @@ struct ContentView: View {
         VStack {
             if barState == .minimal {
                 BottomBarMinimalView()
-                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
+                    .padding(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
                     .transition(.blurReplace)
             } else {
                 BottomBarToolView(state: $barState)
@@ -102,7 +102,7 @@ enum BottomBarState {
         case .collapse:
             return 44 + 24
         case .minimal:
-            return 18 + 8
+            return 18 + 6
         }
     }
 }
