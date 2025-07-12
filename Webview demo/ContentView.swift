@@ -79,13 +79,23 @@ struct ContentView: View {
             } else {
                 BottomBarToolView(state: $barState)
                     .transition(.blurReplace)
+                
             }
         }
+   
         .overlay(alignment: .top) {
             Rectangle().fill(.gray1)
                 .frame(height: 1)
         }
         .background(.regularMaterial) // 添加模糊玻璃效果背景
+        .onTapGesture {
+            if barState == .minimal {
+                withAnimation(.easeOut(duration: 0.15),  {
+                    barState = .toolBar
+                    barHeight = BottomBarState.toolBar.height
+                })
+            }
+        }
     
     }
 }
@@ -238,7 +248,7 @@ struct BottomBarToolView: View {
 }
 
 struct BottomBarMinimalView: View {
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Spacer()
