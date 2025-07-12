@@ -24,6 +24,8 @@ struct ContentView: View {
     @State private var barState: BottomBarState = .toolBar
     @State private var barHeight: CGFloat = BottomBarState.toolBar.height
 
+    @Namespace var namespace
+
     var body: some View {
         ZStack {
             WebViewWithControls(
@@ -73,11 +75,11 @@ struct ContentView: View {
     private var bottomBar: some View {
         VStack {
             if barState == .minimal {
-                BottomBarMinimalView()
+                BottomBarMinimalView(namespace: namespace)
                     .padding(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
                     .transition(.blurReplace)
             } else {
-                BottomBarToolView(state: $barState)
+                BottomBarToolView(state: $barState, namespace: namespace)
                     .transition(.blurReplace)
                 
             }
@@ -117,7 +119,7 @@ enum BottomBarState {
 struct BottomBarToolView: View {
     @Binding var state: BottomBarState
     @State var isExpand: Bool = false
-    @Namespace var namespace
+    let namespace: Namespace.ID
     
     var body: some View {
         VStack(spacing: 0) {
@@ -223,6 +225,7 @@ struct BottomBarToolView: View {
             
         } label: {
             Image(.icTrans)
+                .matchedGeometryEffect(id: "logo", in: namespace)
                 .shadow(color: .gray3.opacity(0.15), radius: 6, y: 3)
                 .rotationEffect(.degrees(isExpand ? 360 : 0))
         }
@@ -248,15 +251,17 @@ struct BottomBarToolView: View {
 }
 
 struct BottomBarMinimalView: View {
+    let namespace: Namespace.ID
 
     var body: some View {
         HStack(spacing: 0) {
             Spacer()
-            Image(.icCheck)
-                .padding(.trailing, 4)
             Text("m.youtube.com")
                 .font(.system(size: 14))
                 .foregroundStyle(.gray3)
+            Image(.icCheck)
+                .matchedGeometryEffect(id: "logo", in: namespace)
+                .padding(.leading, 4)
             Spacer()
         }
         .frame(height: 18)
@@ -269,12 +274,15 @@ struct BottomBarMinimalView: View {
 
 #Preview("BottomBar") {
     @Previewable @State var state: BottomBarState = .toolBar
-    
-    VStack(spacing: 20) {
-        BottomBarToolView(state: $state)
-        
-        BottomBarToolView(state: $state, isExpand: true)
+    @Previewable @Namespace var testNamespace
+    @Previewable @Namespace var tempNamespace
+    @Previewable @Namespace var previewNamespace
 
-        BottomBarMinimalView()
+    VStack(spacing: 20) {
+        BottomBarToolView(state: $state, namespace: tempNamespace)
+        
+        BottomBarToolView(state: $state, isExpand: true, namespace: testNamespace)
+
+        BottomBarMinimalView(namespace: previewNamespace)
     }
 }
