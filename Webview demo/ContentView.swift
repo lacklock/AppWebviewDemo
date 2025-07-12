@@ -9,9 +9,9 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
-//    @State private var currentURL = URL(string: "https://developer.apple.com/")!
+    @State private var currentURL = URL(string: "https://developer.apple.com/")!
 //    @State private var currentURL = URL(string: "https://www.apple.com/ipad-air/")!
-    @State private var currentURL = URL(string: "https://m.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
+//    @State private var currentURL = URL(string: "https://m.youtube.com/feed/trending?bp=6gQJRkVleHBsb3Jl")!
     @State private var webView: WKWebView = WKWebView()
     @State private var isLoading = false
     @State private var canGoForward = false
@@ -96,6 +96,7 @@ struct ContentView: View {
                     barState = .toolBar
                     barHeight = BottomBarState.toolBar.height
                 })
+                HapticFeedback.selection()
             }
         }
     
@@ -209,6 +210,7 @@ struct BottomBarToolView: View {
             withAnimation {
                 isExpand.toggle()
             }
+            HapticFeedback.selection()
         } label: {
            Circle()
                 .stroke(.gray1, lineWidth: 1)
@@ -220,10 +222,17 @@ struct BottomBarToolView: View {
         }
     }
     
+    @State var tempFlag = true
+    
     @ViewBuilder
     private var transButton: some View {
         Button {
-            
+            if tempFlag {
+                HapticFeedback.rigid()
+            } else {
+                HapticFeedback.soft()
+            }
+            tempFlag.toggle()
         } label: {
             Image(.icTrans)
                 .rotationEffect(.degrees(isExpand ? 360 : 0))
