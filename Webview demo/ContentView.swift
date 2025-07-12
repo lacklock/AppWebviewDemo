@@ -151,6 +151,7 @@ struct BottomBarToolView: View {
                             Text("m.youtube.com")
                                 .font(.system(size: 16))
                                 .foregroundStyle(.black)
+                                .matchedGeometryEffect(id: "domain", in: namespace)
                             Spacer(minLength: 0)
                         }
                         .padding(.horizontal, 16)
@@ -258,6 +259,7 @@ struct BottomBarMinimalView: View {
             Spacer()
             Text("m.youtube.com")
                 .font(.system(size: 14))
+                .matchedGeometryEffect(id: "domain", in: namespace)
                 .foregroundStyle(.gray3)
             Image(.icCheck)
                 .matchedGeometryEffect(id: "logo", in: namespace)
