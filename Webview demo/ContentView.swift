@@ -77,7 +77,7 @@ struct ContentView: View {
                     .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 16))
                     .transition(.blurReplace)
             } else {
-                BottomBarToolView(state: barState)
+                BottomBarToolView(state: $barState)
                     .transition(.blurReplace)
             }
         }
@@ -93,7 +93,7 @@ enum BottomBarState {
     var height: CGFloat {
         switch self {
         case .expand:
-            return 60 + 8
+            return 68 + 40
         case .collapse:
             return 44 + 24
         case .minimal:
@@ -103,7 +103,7 @@ enum BottomBarState {
 }
 
 struct BottomBarToolView: View {
-    let state: BottomBarState
+    @Binding var state: BottomBarState
     
     var body: some View {
         VStack(spacing: 0) {
@@ -127,9 +127,12 @@ struct BottomBarToolView: View {
                     } label: {
                         Image(.icTrans)
                     }
+                    .id("tranButton")
                     Spacer()
                     Button {
-                        
+                        withAnimation {
+                            state = .expand
+                        }
                     } label: {
                        Circle()
                             .stroke(.gray1, lineWidth: 1)
@@ -138,11 +141,59 @@ struct BottomBarToolView: View {
                                 Image(.icUp)
                             }
                     }
+                    .id("stateButton")
                 }
                 .frame(height: 44)
                 .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
             } else {
-                
+                HStack(spacing: 0) {
+                    Capsule()
+                        .fill(.gray3.opacity(0.1))
+                    Button {
+                        
+                    } label: {
+                        Image(.icTrans)
+                    }
+                    .padding(.horizontal, 24)
+                    .id("tranButton")
+                    Button {
+                        withAnimation {
+                            state = .collapse
+                        }
+                    } label: {
+                       Circle()
+                            .stroke(.gray1, lineWidth: 1)
+                            .frame(width: 28)
+                            .overlay {
+                                Image(.icUp)
+                                    .rotationEffect(.degrees(180))
+                            }
+                    }
+                    .id("stateButton")
+                }
+                .frame(height: 44)
+                .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
+                HStack(spacing: 0) {
+                    Button {
+                        
+                    } label: {
+                        Image(.icFeedback)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(.icFeedback)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(.icMore)
+                    }
+                }
+                .frame(height: 36)
+                .padding(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
             }
         }
     }
@@ -184,9 +235,13 @@ struct BottomBarMinimalView: View {
 }
 
 #Preview("BottomBar") {
+    @Previewable @State var state: BottomBarState = .collapse
+    
     VStack(spacing: 20) {
-        BottomBarToolView(state: .collapse)
+        BottomBarToolView(state: $state)
         
+        BottomBarToolView(state: .constant(.expand))
+
         BottomBarMinimalView()
     }
 }
