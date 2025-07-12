@@ -121,12 +121,28 @@ struct BottomBarToolView: View {
                 .opacity(isExpand ? 0 : 1.0)
                 if isExpand {
                     ZStack {
-                        Capsule()
-                            .fill(.gray3.opacity(0.1))
-                        Capsule()
-                            .stroke(.gray1, lineWidth: 1)
+                        ZStack {
+                            Capsule()
+                                .fill(.gray3.opacity(0.12))
+                                .shadow(color: .black.opacity(0.4), radius: 12, y: 1)
+                            Capsule()
+                                .stroke(.gray1, lineWidth: 1)
+                        }
+                        .matchedGeometryEffect(id: "capsule", in: namespace)
+                        HStack(spacing: 0) {
+                            Button {
+                                
+                            } label: {
+                                Image(.icFavorite)
+                            }
+                            .padding(.trailing, 8)
+                            Text("m.youtube.com")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.black)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 16)
                     }
-                    .matchedGeometryEffect(id: "capsule", in: namespace)
                     .padding(.trailing, 24)
                 } else {
                     Spacer()
@@ -222,9 +238,12 @@ struct BottomBarToolView: View {
 }
 
 struct BottomBarMinimalView: View {
+    
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             Spacer()
+            Image(.icCheck)
+                .padding(.trailing, 4)
             Text("m.youtube.com")
                 .font(.system(size: 14))
                 .foregroundStyle(.gray3)
