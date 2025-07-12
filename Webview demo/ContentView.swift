@@ -81,7 +81,12 @@ struct ContentView: View {
                     .transition(.blurReplace)
             }
         }
+        .overlay(alignment: .top) {
+            Rectangle().fill(.gray1)
+                .frame(height: 1)
+        }
         .background(.regularMaterial) // 添加模糊玻璃效果背景
+    
     }
 }
 
@@ -126,42 +131,21 @@ struct BottomBarToolView: View {
                     Spacer()
                     transButton
                     Spacer()
-                    Button {
-                        withAnimation {
-                            state = .expand
-                        }
-                    } label: {
-                       Circle()
-                            .stroke(.gray1, lineWidth: 1)
-                            .frame(width: 28)
-                            .overlay {
-                                Image(.icUp)
-                            }
-                    }
-                    .id("stateButton")
+                    stateButton
                 }
                 .frame(height: 44)
                 .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
             } else {
                 HStack(spacing: 0) {
-                    Capsule()
-                        .fill(.gray3.opacity(0.1))
-                        .matchedGeometryEffect(id: "capsule", in: namespace)
-                    transButton
-                    Button {
-                        withAnimation {
-                            state = .collapse
-                        }
-                    } label: {
-                       Circle()
+                    ZStack {
+                        Capsule()
+                            .fill(.gray3.opacity(0.1))
+                        Capsule()
                             .stroke(.gray1, lineWidth: 1)
-                            .frame(width: 28)
-                            .overlay {
-                                Image(.icUp)
-                                    .rotationEffect(.degrees(180))
-                            }
                     }
-                    .id("stateButton")
+                    .matchedGeometryEffect(id: "capsule", in: namespace)
+                    transButton
+                    stateButton
                 }
                 .frame(height: 44)
                 .padding(EdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16))
@@ -175,7 +159,7 @@ struct BottomBarToolView: View {
                     Button {
                         
                     } label: {
-                        Image(.icFeedback)
+                        Image(.icReload)
                     }
                     Spacer()
                     Button {
@@ -191,11 +175,33 @@ struct BottomBarToolView: View {
     }
     
     @ViewBuilder
+    private var stateButton: some View {
+        Button {
+            withAnimation {
+                if state == .expand {
+                    state = .collapse
+                } else {
+                    state = .expand
+                }
+            }
+        } label: {
+           Circle()
+                .stroke(.gray1, lineWidth: 1)
+                .frame(width: 28)
+                .overlay {
+                    Image(.icUp)
+                        .rotationEffect(.degrees(state == .expand ? 180 : 0))                }
+        }
+        .matchedGeometryEffect(id: "stateButton", in: namespace)
+    }
+    
+    @ViewBuilder
     private var transButton: some View {
         Button {
             
         } label: {
             Image(.icTrans)
+                .shadow(color: .gray3.opacity(0.15), radius: 6, y: 3)
         }
         .padding(.horizontal, 24)
         .matchedGeometryEffect(id: "tranButton", in: namespace)
