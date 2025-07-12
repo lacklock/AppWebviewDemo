@@ -226,9 +226,9 @@ struct BottomBarToolView: View {
             
         } label: {
             Image(.icTrans)
+                .rotationEffect(.degrees(isExpand ? 360 : 0))
                 .matchedGeometryEffect(id: "logo", in: namespace)
                 .shadow(color: .gray3.opacity(0.15), radius: 6, y: 3)
-                .rotationEffect(.degrees(isExpand ? 360 : 0))
         }
     }
     
