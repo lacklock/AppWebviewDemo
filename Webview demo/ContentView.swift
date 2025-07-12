@@ -104,6 +104,7 @@ enum BottomBarState {
 
 struct BottomBarToolView: View {
     @Binding var state: BottomBarState
+    @Namespace var namespace
     
     var body: some View {
         VStack(spacing: 0) {
@@ -118,16 +119,12 @@ struct BottomBarToolView: View {
                     Capsule()
                         .stroke(.gray1, lineWidth: 1)
                         .frame(width: 104)
+                        .matchedGeometryEffect(id: "capsule", in: namespace)
                         .overlay {
                             historyButtons
                         }
                     Spacer()
-                    Button {
-                        
-                    } label: {
-                        Image(.icTrans)
-                    }
-                    .id("tranButton")
+                    transButton
                     Spacer()
                     Button {
                         withAnimation {
@@ -149,13 +146,8 @@ struct BottomBarToolView: View {
                 HStack(spacing: 0) {
                     Capsule()
                         .fill(.gray3.opacity(0.1))
-                    Button {
-                        
-                    } label: {
-                        Image(.icTrans)
-                    }
-                    .padding(.horizontal, 24)
-                    .id("tranButton")
+                        .matchedGeometryEffect(id: "capsule", in: namespace)
+                    transButton
                     Button {
                         withAnimation {
                             state = .collapse
@@ -196,6 +188,17 @@ struct BottomBarToolView: View {
                 .padding(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
             }
         }
+    }
+    
+    @ViewBuilder
+    private var transButton: some View {
+        Button {
+            
+        } label: {
+            Image(.icTrans)
+        }
+        .padding(.horizontal, 24)
+        .matchedGeometryEffect(id: "tranButton", in: namespace)
     }
     
     @ViewBuilder
