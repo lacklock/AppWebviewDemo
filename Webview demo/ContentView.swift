@@ -112,6 +112,13 @@ struct BottomBarToolView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
+                Button {
+                    
+                } label: {
+                    Image(.close)
+                }
+                .padding(.leading, isExpand ? -28 : 0)
+                .opacity(isExpand ? 0 : 1.0)
                 if isExpand {
                     ZStack {
                         Capsule()
@@ -122,11 +129,6 @@ struct BottomBarToolView: View {
                     .matchedGeometryEffect(id: "capsule", in: namespace)
                     .padding(.trailing, 24)
                 } else {
-                    Button {
-                        
-                    } label: {
-                        Image(.close)
-                    }
                     Spacer()
                     Capsule()
                         .stroke(.gray1, lineWidth: 1)
@@ -196,6 +198,7 @@ struct BottomBarToolView: View {
         } label: {
             Image(.icTrans)
                 .shadow(color: .gray3.opacity(0.15), radius: 6, y: 3)
+                .rotationEffect(.degrees(isExpand ? 360 : 0))
         }
     }
     
